@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head> 
-    @include('admin.css ')
+    @include('admin.css')
 
-    <style type = "text/css">
+    <style type="text/css">
       .table_deg {
         border: 2px solid white;
         margin: auto;
@@ -17,6 +17,7 @@
       .table_deg td {
         border: 2px solid white;
         padding: 12px;
+        vertical-align: middle;
       }
 
       .the_deg {
@@ -25,8 +26,8 @@
       }
 
       .room-img {
-        width: 120px;
-        height: 80px;
+        width: 200px;   /* Bigger width */
+        height: 150px;  /* Bigger height */
         object-fit: cover;
         border-radius: 8px;
       }
@@ -37,16 +38,13 @@
     <div class="d-flex align-items-stretch">
       <!-- Sidebar Navigation-->
       <nav id="sidebar">
-        <!-- Sidebar Header-->
-       @include('admin.sidebar')
-      <!-- Sidebar Navigation end-->
+        @include('admin.sidebar')
 
-      <div class="page-content">
-        <div class="page-header">
-          <div class="container-fluid">
-      
+        <div class="page-content">
+          <div class="page-header">
+            <div class="container-fluid">
 
-           <table class="table_deg">
+              <table class="table_deg">
                 <tr>
                   <th class="the_deg">Room ID</th>
                   <th class="the_deg">Customer Name</th>
@@ -60,7 +58,6 @@
                   <th class="the_deg">Price</th>
                   <th class="the_deg">Delete</th>
                   <th class="the_deg">Status Update</th>
-
                 </tr>
 
                 @foreach($bookings as $booking)
@@ -71,55 +68,45 @@
                     <td>{{ $booking->phone }}</td>
                     <td>
                       @if($booking->status == 'Approve')
-                      <span style="color:Green;">Approved</span>
-                      @endif
-                      @if($booking->status == 'rejected')
-                      <span style="color:Red;">Rejected</span>
-                      @endif
-                      @if($booking->status == 'pending')
-                      <span style="color:yellow;">Pending</span>
+                        <span style="color:Green;">Approved</span>
+                      @elseif($booking->status == 'rejected')
+                        <span style="color:Red;">Rejected</span>
+                      @else
+                        <span style="color:yellow;">Pending</span>
                       @endif
                     </td>
                     <td>{{ $booking->start_date }}</td>
                     <td>{{ $booking->end_date }}</td>
-                    <td>{{ $booking->room->room_title }}</td>
+
+                    {{-- Safely handle missing room --}}
+                    <td>{{ $booking->room->room_title ?? 'Room Not Found' }}</td>
                     <td>
-                      <img style = "width:200 ! important" src ="/room/{{ $booking->room->image }}">
+                      @if($booking->room && $booking->room->image)
+                        <img class="room-img" src="/room/{{ $booking->room->image }}">
+                      @else
+                        <span style="color:red;">No Image</span>
+                      @endif
                     </td>
-                    <td>{{ $booking->room->price }}</td>
+                    <td>{{ $booking->room->price ?? 'N/A' }}</td>
+
                     <td>
-                      <a onclick="return confirm('are you sure you want to delete this');" class="btn btn-danger" href="{{ url('delete_booking',$booking->id) }}">Delete</a>
+                      <a onclick="return confirm('Are you sure you want to delete this?');" class="btn btn-danger" href="{{ url('delete_booking',$booking->id) }}">Delete</a>
                     </td>
                     <td>
                       <span style="padding-bottom:10px;">
-                        <a class="btn btn-success" href="{{url('approve_book',$booking->id)}}">Approve</a>
+                        <a class="btn btn-success" href="{{ url('approve_book',$booking->id) }}">Approve</a>
                       </span>
-                      <a class="btn btn-warning" href="{{url('reject_book',$booking->id)}}">Rejected</a>      
+                      <a class="btn btn-warning" href="{{ url('reject_book',$booking->id) }}">Reject</a>
                     </td>
-                    
-                </tr>
-                  @endforeach
-                
+                  </tr>
+                @endforeach
               </table>
-      
-      
-      
-      
-      
-      </div>
-        </div>
+
+            </div>
           </div>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-          @include('admin.footer')
+        </div>
+      </nav>
+    </div>
+    @include('admin.footer')
   </body>
 </html>
