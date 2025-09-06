@@ -3,7 +3,7 @@
 
 Hello **{{ $booking->name }}**,
 
-Your booking for room **{{ $booking->room->room_title }}** has been **{{ ucfirst($status) }}**.
+Your booking for room **{{ $booking->room?->room_title ?? 'N/A' }}** has been **{{ ucfirst($status) }}**.
 
 @component('mail::button', ['url' => url('/')])
 Visit Website

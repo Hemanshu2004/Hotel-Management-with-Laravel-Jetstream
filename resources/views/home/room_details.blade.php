@@ -6,7 +6,6 @@
 
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-      
       <style type="text/css">
          label {
             display: inline-block;
@@ -15,6 +14,47 @@
          input {
             width: 100%;
             padding: 8px;
+            margin-bottom: 10px;
+         }
+
+         /* Room card styling */
+         .room-detail-card {
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background-color: #fff;
+         }
+
+         .room-img-wrapper {
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+         }
+
+         .room-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+         }
+
+         /* Room type badge */
+         .room-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: rgba(0, 123, 255, 0.9);
+            color: #fff;
+            padding: 5px 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            text-transform: uppercase;
+         }
+
+         .room-content h2, .room-content h3, .room-content h4 {
             margin-bottom: 10px;
          }
       </style>
@@ -33,29 +73,21 @@
       <div class="our_room">
          <div class="container">
             <div class="row">
-               <div class="col-md-12">
-                  <div class="titlepage">
-                     <h2>Our Room</h2>
-                     <p>Welcome to the Keto's – Enjoy your stay!!!</p>
-                  </div>
-               </div>
-            </div>
-
-            <div class="row">
                <!-- Room Details -->
                <div class="col-md-8">
-                  <div id="serv_hover" class="room">
-                     <div style="padding: 20px" class="room_img">
-                        <figure>
-                           <img style="height:300px; width:800px" src="/room/{{ $room->image }}" alt="Room Image"/>
-                        </figure>
+                  <div class="room-detail-card">
+                     <div class="room-img-wrapper">
+                        <img src="/room/{{ $room->image }}" alt="Room Image">
+                        @if($room->room_type)
+                        <span class="room-badge">{{ $room->room_type }}</span>
+                        @endif
                      </div>
-                     <div class="bed_room">
+                     <div class="room-content p-3">
                         <h2>{{ $room->room_title }}</h2>
-                        <p style="padding:12px">{{ $room->description }}</p>
-                        <h4>Free wifi: {{ $room->wifi }}</h4>
+                        <p>{{ $room->description }}</p>
+                        <h4>Free WiFi: {{ $room->wifi }}</h4>
                         <h4>Room Type: {{ $room->room_type }}</h4>
-                        <h3>Price: {{ $room->price }}</h3>
+                        <h3>Price: ₹{{ $room->price }}</h3>
                      </div>
                   </div>
                </div>
@@ -64,29 +96,18 @@
                <div class="col-md-4">
                   <h1 style="font-size: 40px!important;">Book Room</h1>
 
-                  <div>
                   @if(session()->has('message'))
-                  <div class = "alert alert-success">
+                  <div class="alert alert-success">
                      <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="alert"></button>
-                  {{ session()->get('message') }}
+                     {{ session()->get('message') }}
                   </div>
-
                   @endif
-              </div>
-                
-                 @if($errors)
 
-                 @foreach($errors->all() as $errors)
-
-                 <li style ="color : red">
-                  {{ $errors }}
-                 </li>
-                 @endforeach
-
-                 @endif
-
-
-
+                  @if($errors)
+                     @foreach($errors->all() as $error)
+                     <li style="color:red">{{ $error }}</li>
+                     @endforeach
+                  @endif
 
                   <form action="{{ url('add_booking', $room->id) }}" method="POST">
                      @csrf
@@ -115,7 +136,7 @@
                         <input type="date" name="endDate" id="endDate" required>
                      </div>
 
-                     <div style = "padding-top: 20px">
+                     <div style="padding-top: 20px">
                         <input type="submit" class="btn btn-primary" value="Book Room">
                      </div>
                   </form>

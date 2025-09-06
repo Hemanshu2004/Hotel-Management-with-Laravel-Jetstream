@@ -193,24 +193,33 @@ class AdminController extends Controller
   
 public function approve_book($id)
 {
-    $booking = Booking::find($id);
-    $booking->status = 'Approve';
+    $booking = Booking::with('room')->find($id); // load room relationship
+    if(!$booking) {
+        return redirect()->back()->with('error', 'Booking not found');
+    }
+
+    $booking->status = 'Approved';
     $booking->save();
 
-    Mail::to($booking->email)->send(new BookingStatusMail($booking, 'Approve'));
+    Mail::to($booking->email)->send(new BookingStatusMail($booking, 'Approved'));
 
     return redirect()->back()->with('message', 'Booking Approved & Email Sent');
 }
 
 public function reject_book($id)
 {
-    $booking = Booking::find($id);
-    $booking->status = 'rejected';
+    $booking = Booking::with('room')->find($id); // load room relationship
+    if(!$booking) {
+        return redirect()->back()->with('error', 'Booking not found');
+    }
+
+    $booking->status = 'Rejected';
     $booking->save();
 
-    Mail::to($booking->email)->send(new BookingStatusMail($booking, 'rejected'));
+    Mail::to($booking->email)->send(new BookingStatusMail($booking, 'Rejected'));
 
     return redirect()->back()->with('message', 'Booking Rejected & Email Sent');
 }
+
 
 }
